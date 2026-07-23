@@ -43,9 +43,17 @@ class SchoolClass(models.Model):
 
 
 class Student(models.Model):
+    GENDER_CHOICES = [
+        ("Male", "Male"),
+        ("Female", "Female"),
+        ("Other", "Other"),
+        ("Prefer not to say", "Prefer not to say"),
+    ]
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_profile")
     student_id = models.CharField(max_length=30, unique=True)
     full_name = models.CharField(max_length=150)
+    gender = models.CharField(max_length=30, choices=GENDER_CHOICES, blank=True, help_text="Example: Male, Female, or Other")
     guardian_name = models.CharField(max_length=150)
     guardian_email = models.EmailField(blank=True)
     current_class = models.ForeignKey(SchoolClass, on_delete=models.PROTECT, related_name="students")

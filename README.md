@@ -143,25 +143,26 @@ python manage.py migrate
 Use the admin dashboard's `Import CSV` button. The CSV file must have these exact headings:
 
 ```csv
-student_id,full_name,guardian_name,guardian_email,class_name,academic_session,temporary_password
+student_id,student_name,gender,class_name,academic_session,temporary_password
 ```
 
 Example:
 
 ```csv
-student_id,full_name,guardian_name,guardian_email,class_name,academic_session,temporary_password
-STD-001,Ada Johnson,Mrs. Johnson,guardian@example.com,JSS 1A,2026/2027,StudentPass123!
+student_id,student_name,gender,class_name,academic_session,temporary_password
+STD-001,Ada Johnson,Female,JSS 1A,2026/2027,StudentPass123!
 ```
 
 Why each heading exists:
 
 - `student_id`: unique login username and permanent school identifier.
-- `full_name`: displayed on dashboards and admin searches.
-- `guardian_name`: confirms the parent or guardian attached to the account.
-- `guardian_email`: useful for communication and future password reset emails.
+- `student_name`: displayed on dashboards and admin searches.
+- `gender`: stores the learner's gender for records and reporting.
 - `class_name`: creates or links the student to a class.
 - `academic_session`: creates or links the student to the active academic year.
-- `temporary_password`: creates the initial guardian password; existing students can leave it blank to keep their current password.
+- `temporary_password`: creates the initial guardian login password; existing students can leave it blank to keep their current password.
+
+Guardian name and email are now auto-filled for imported records, so the CSV only needs the student-specific details above.
 
 ## Result Publishing
 

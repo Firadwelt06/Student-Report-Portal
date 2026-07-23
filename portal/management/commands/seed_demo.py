@@ -25,6 +25,7 @@ class Command(BaseCommand):
             defaults={
                 "student_id": "STD-001",
                 "full_name": "Ada Johnson",
+                "gender": "Female",
                 "guardian_name": "Mrs. Johnson",
                 "guardian_email": "guardian@example.com",
                 "current_class": school_class,

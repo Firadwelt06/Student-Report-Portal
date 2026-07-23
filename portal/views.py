@@ -285,9 +285,8 @@ def student_csv_import(request):
 
 REQUIRED_STUDENT_CSV_HEADINGS = [
     "student_id",
-    "full_name",
-    "guardian_name",
-    "guardian_email",
+    "student_name",
+    "gender",
     "class_name",
     "academic_session",
     "temporary_password",
@@ -317,7 +316,7 @@ def _import_students_from_csv(csv_file):
             required_missing = [
                 key
                 for key, value in cleaned.items()
-                if key not in ["guardian_email", "temporary_password"] and not value
+                if key not in ["temporary_password"] and not value
             ]
             if not student and not cleaned["temporary_password"]:
                 required_missing.append("temporary_password")
@@ -336,13 +335,11 @@ def _import_students_from_csv(csv_file):
             session, _ = AcademicSession.objects.get_or_create(name=cleaned["academic_session"])
 
             if student:
-                student.full_name = cleaned["full_name"]
-                student.guardian_name = cleaned["guardian_name"]
-                student.guardian_email = cleaned["guardian_email"]
+                student.full_name = cleaned["student_name"]
+                student.gender = cleaned["gender"]
                 student.current_class = school_class
                 student.active_session = session
                 student.user.username = cleaned["student_id"]
-                student.user.email = cleaned["guardian_email"]
                 if cleaned["temporary_password"]:
                     try:
                         validate_password(cleaned["temporary_password"], user=student.user)
@@ -354,15 +351,16 @@ def _import_students_from_csv(csv_file):
                 student.save()
                 updated += 1
             else:
-                user = User(username=cleaned["student_id"], email=cleaned["guardian_email"], role=User.Role.GUARDIAN)
+                user = User(username=cleaned["student_id"], role=User.Role.GUARDIAN)
                 user.set_password(cleaned["temporary_password"])
                 user.save()
                 Student.objects.create(
                     user=user,
                     student_id=cleaned["student_id"],
-                    full_name=cleaned["full_name"],
-                    guardian_name=cleaned["guardian_name"],
-                    guardian_email=cleaned["guardian_email"],
+                    full_name=cleaned["student_name"],
+                    gender=cleaned["gender"],
+                    guardian_name=cleaned["student_name"],
+                    guardian_email="",
                     current_class=school_class,
                     active_session=session,
                 )

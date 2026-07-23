@@ -23,6 +23,7 @@ class StudentForm(forms.ModelForm):
         fields = [
             "student_id",
             "full_name",
+            "gender",
             "guardian_name",
             "guardian_email",
             "current_class",

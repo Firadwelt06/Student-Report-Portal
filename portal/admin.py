@@ -13,8 +13,8 @@ class PortalUserAdmin(UserAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ("student_id", "full_name", "current_class", "active_session", "guardian_name")
-    search_fields = ("student_id", "full_name", "guardian_name", "guardian_email")
+    list_display = ("student_id", "full_name", "gender", "current_class", "active_session", "guardian_name")
+    search_fields = ("student_id", "full_name", "gender", "guardian_name", "guardian_email")
     list_filter = ("current_class", "active_session")
 
 
