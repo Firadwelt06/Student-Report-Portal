@@ -1,0 +1,36 @@
+{% extends "portal/base.html" %}
+{% block title %}Divine Triumph International School Result Portal{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Secure academic records</p>
+        <h1>Divine Triumph International School</h1>
+        <p>Parents and guardians can safely access approved student result PDFs after authentication.</p>
+        <a class="button primary" href="{% url 'login' %}">Open Portal</a>
+    </div>
+    <div class="hero-panel">
+        <div>
+            <span class="metric">Private</span>
+            <p>PDFs are served only after account and ownership checks.</p>
+        </div>
+        <div>
+            <span class="metric">Auditable</span>
+            <p>Results are tied to student, class, term, and academic session records.</p>
+        </div>
+    </div>
+</section>
+<section class="feature-grid">
+    <article>
+        <h2>For Guardians</h2>
+        <p>Log in with assigned credentials and view only your child's records.</p>
+    </article>
+    <article>
+        <h2>For Administrators</h2>
+        <p>Manage students, classes, sessions, passwords, and uploaded result PDFs.</p>
+    </article>
+    <article>
+        <h2>For Production</h2>
+        <p>Designed around hashed passwords, CSRF protection, private storage, and role checks.</p>
+    </article>
+</section>
+{% endblock %}

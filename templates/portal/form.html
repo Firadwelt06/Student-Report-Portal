@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="form-page">
+    <div>
+        <p class="eyebrow">Admin action</p>
+        <h1>{{ title }}</h1>
+    </div>
+    <form class="form-card wide" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <div class="button-row">
+            <button class="button primary" type="submit">Save</button>
+            <a class="button" href="{% url 'admin_dashboard' %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

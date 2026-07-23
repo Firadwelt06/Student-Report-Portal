@@ -1,0 +1,28 @@
+{% extends "portal/base.html" %}
+{% block title %}Academic Sessions{% endblock %}
+{% block content %}
+<section class="form-page two-column">
+    <div>
+        <p class="eyebrow">Academic setup</p>
+        <h1>Sessions</h1>
+        <form class="form-card" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button primary" type="submit">Save Session</button>
+        </form>
+    </div>
+    <div class="list-panel">
+        {% for session in sessions %}
+            <p class="list-row">
+                <span><strong>{{ session.name }}</strong>{% if session.is_active %} <span class="pill">Active</span>{% endif %}</span>
+                <span class="actions">
+                    <a href="{% url 'session_edit' session.id %}">Edit</a>
+                    <a href="{% url 'session_delete' session.id %}">Delete</a>
+                </span>
+            </p>
+        {% empty %}
+            <p>No sessions created yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

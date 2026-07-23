@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="form-page">
+    <div>
+        <p class="eyebrow">Bulk results</p>
+        <h1>{{ title }}</h1>
+        <p>Select the class, session, term, then upload all learner PDFs together. The system matches each PDF filename against the learner's full name.</p>
+    </div>
+    <form class="form-card wide" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <div class="csv-headings">
+            <strong>Filename rule</strong>
+            <code>A learner named Ada Johnson should have a PDF named Ada Johnson.pdf</code>
+        </div>
+        <div class="button-row">
+            <button class="button primary" type="submit">Attach PDFs</button>
+            <a class="button" href="{% url 'admin_dashboard' %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

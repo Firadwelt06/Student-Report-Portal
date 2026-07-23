@@ -1,0 +1,59 @@
+{% extends "portal/base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">Student dashboard</p>
+    <h1>{{ student.full_name }}</h1>
+    <p>{{ student.student_id }} · {{ student.current_class }} · {{ student.active_session }}</p>
+</section>
+
+<section class="details-grid">
+    <article>
+        <span>Guardian</span>
+        <strong>{{ student.guardian_name }}</strong>
+    </article>
+    <article>
+        <span>Email</span>
+        <strong>{{ student.guardian_email|default:"Not provided" }}</strong>
+    </article>
+    <article>
+        <span>Class</span>
+        <strong>{{ student.current_class }}</strong>
+    </article>
+</section>
+
+<section class="table-section">
+    <div class="section-header">
+        <h2>Result PDFs</h2>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Session</th>
+                    <th>Class</th>
+                    <th>Term</th>
+                    <th>Uploaded</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result.academic_session }}</td>
+                        <td>{{ result.school_class }}</td>
+                        <td>{{ result.term }}</td>
+                        <td>{{ result.uploaded_at|date:"M j, Y" }}</td>
+                        <td class="actions">
+                            <a href="{% url 'view_result' result.id %}" target="_blank">View</a>
+                            <a href="{% url 'download_result' result.id %}">Download</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No result has been published yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

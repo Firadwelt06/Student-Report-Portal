@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="School logo">
+  <rect width="96" height="96" rx="18" fill="#0f766e"/>
+  <path d="M48 14 78 29 48 44 18 29 48 14Z" fill="#fff"/>
+  <path d="M28 41v18c0 8 9 15 20 15s20-7 20-15V41L48 51 28 41Z" fill="#dff7f4"/>
+  <path d="M76 32v25" stroke="#c2410c" stroke-width="6" stroke-linecap="round"/>
+</svg>

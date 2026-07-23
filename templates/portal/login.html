@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<section class="auth-layout">
+    <div>
+        <p class="eyebrow">Portal access</p>
+        <h1>Sign in securely</h1>
+        <p>Use the Student ID provided by the school. Administrators can sign in with their admin username.</p>
+    </div>
+    <form class="form-card" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <button class="button primary" type="submit">Login</button>
+    </form>
+</section>
+{% endblock %}

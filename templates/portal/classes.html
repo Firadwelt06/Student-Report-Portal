@@ -1,0 +1,28 @@
+{% extends "portal/base.html" %}
+{% block title %}Classes{% endblock %}
+{% block content %}
+<section class="form-page two-column">
+    <div>
+        <p class="eyebrow">Academic setup</p>
+        <h1>Classes</h1>
+        <form class="form-card" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button primary" type="submit">Save Class</button>
+        </form>
+    </div>
+    <div class="list-panel">
+        {% for class in classes %}
+            <p class="list-row">
+                <strong>{{ class.name }}</strong>
+                <span class="actions">
+                    <a href="{% url 'class_edit' class.id %}">Edit</a>
+                    <a href="{% url 'class_delete' class.id %}">Delete</a>
+                </span>
+            </p>
+        {% empty %}
+            <p>No classes created yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

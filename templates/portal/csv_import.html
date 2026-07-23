@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="form-page">
+    <div>
+        <p class="eyebrow">Bulk import</p>
+        <h1>{{ title }}</h1>
+        <p>Use this when you already have student records in Excel. Export the sheet as CSV, then upload it here.</p>
+    </div>
+    <form class="form-card wide" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <div class="csv-headings">
+            <strong>Required headings</strong>
+            <code>{{ required_headings|join:", " }}</code>
+        </div>
+        <div class="button-row">
+            <button class="button primary" type="submit">Import Students</button>
+            <a class="button" href="{% url 'admin_dashboard' %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

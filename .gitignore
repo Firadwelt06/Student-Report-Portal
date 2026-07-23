@@ -1,0 +1,10 @@
+.env
+db.sqlite3
+staticfiles/
+private_uploads/*
+!private_uploads/.gitkeep
+logs/*
+!logs/.gitkeep
+__pycache__/
+*.py[cod]
+.venv/

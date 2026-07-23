@@ -1,0 +1,61 @@
+{% extends "portal/base.html" %}
+{% block title %}Result Publishing{% endblock %}
+{% block content %}
+<section class="form-page two-column">
+    <div>
+        <p class="eyebrow">Result release</p>
+        <h1>Term Publishing</h1>
+        <form class="form-card" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="button primary" type="submit">Save Publishing Rule</button>
+        </form>
+    </div>
+    <div class="table-section">
+        <div class="section-header">
+            <h2>Publishing Rules</h2>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Session</th>
+                        <th>Class</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Updated</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for publication in publications %}
+                        <tr>
+                            <td>{{ publication.academic_session }}</td>
+                            <td>{{ publication.school_class }}</td>
+                            <td>{{ publication.term }}</td>
+                            <td>
+                                {% if publication.is_published %}
+                                    <span class="pill">Published</span>
+                                {% else %}
+                                    <span class="pill muted">Unpublished</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ publication.updated_at|date:"M j, Y" }}</td>
+                            <td>
+                                <form method="post" action="{% url 'publication_toggle' publication.id %}">
+                                    {% csrf_token %}
+                                    <button class="link-button" type="submit">
+                                        {% if publication.is_published %}Unpublish{% else %}Publish{% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6">No publishing rules created yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Student Result Portal{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'portal/styles.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="{% url 'home' %}">
+            <img class="brand-logo" src="{% static 'portal/images/divine_triumph_logo.png' %}" alt="Divine Triumph International School logo">
+            <span>
+                <strong>Divine Triumph International School</strong>
+                <small>Student Result Portal</small>
+            </span>
+        </a>
+        <nav class="nav">
+            {% if user.is_authenticated %}
+                {% if user.is_portal_admin %}
+                    <a href="{% url 'admin_dashboard' %}">Admin</a>
+                {% else %}
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                {% endif %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends "portal/base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<section class="page-heading admin-heading">
+    <div>
+        <p class="eyebrow">Administration</p>
+        <h1>Result Portal Admin</h1>
+        <p>Manage student accounts, result PDFs, classes, and academic sessions.</p>
+    </div>
+    <div class="button-row">
+        <a class="button primary" href="{% url 'student_create' %}">Add Student</a>
+        <a class="button" href="{% url 'student_csv_import' %}">Import CSV</a>
+        <a class="button" href="{% url 'result_upload' %}">Upload Result</a>
+        <a class="button" href="{% url 'bulk_result_upload' %}">Bulk PDFs</a>
+    </div>
+</section>
+
+<section class="details-grid">
+    <article><span>Students</span><strong>{{ student_count }}</strong></article>
+    <article><span>Results</span><strong>{{ result_count }}</strong></article>
+    <article><span>Published Terms</span><strong>{{ published_term_count }}</strong></article>
+    <article><span>Classes</span><strong>{{ class_count }}</strong></article>
+    <article><span>Sessions</span><strong>{{ session_count }}</strong></article>
+</section>
+
+<section class="toolbar">
+    <form method="get" class="search-form">
+        <input type="search" name="q" value="{{ query }}" placeholder="Search by ID, name, guardian, or email">
+        <button class="button" type="submit">Search</button>
+    </form>
+    <div class="button-row">
+        <a class="button" href="{% url 'sessions_manage' %}">Sessions</a>
+        <a class="button" href="{% url 'classes_manage' %}">Classes</a>
+        <a class="button" href="{% url 'publications_manage' %}">Publishing</a>
+    </div>
+</section>
+
+<section class="table-section">
+    <div class="section-header">
+        <h2>Students</h2>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Guardian</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.full_name }}</td>
+                        <td>{{ student.current_class }}</td>
+                        <td>{{ student.guardian_name }}</td>
+                        <td class="actions">
+                            <a href="{% url 'student_edit' student.id %}">Edit</a>
+                            <a href="{% url 'reset_student_password' student.id %}">Reset</a>
+                            <a href="{% url 'student_delete' student.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No students found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
