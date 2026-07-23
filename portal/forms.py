@@ -78,11 +78,19 @@ class MultiplePDFInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 
+class MultiplePDFField(forms.FileField):
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [single_file_clean(d, initial) for d in data]
+        return single_file_clean(data, initial)
+
+
 class BulkResultUploadForm(forms.Form):
     academic_session = forms.ModelChoiceField(queryset=AcademicSession.objects.all())
     school_class = forms.ModelChoiceField(queryset=SchoolClass.objects.all())
     term = forms.CharField(max_length=30, help_text="Example: First Term")
-    pdf_files = forms.FileField(
+    pdf_files = MultiplePDFField(
         label="Result PDFs",
         widget=MultiplePDFInput(attrs={"multiple": True, "accept": "application/pdf"}),
         help_text="Select all PDFs for this class and term. Each filename should match the learner's full name.",
