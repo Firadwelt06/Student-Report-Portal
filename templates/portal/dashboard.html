@@ -9,16 +9,20 @@
 
 <section class="details-grid">
     <article>
-        <span>Guardian</span>
-        <strong>{{ student.guardian_name }}</strong>
+        <span>Student ID</span>
+        <strong>{{ student.student_id }}</strong>
     </article>
     <article>
-        <span>Email</span>
-        <strong>{{ student.guardian_email|default:"Not provided" }}</strong>
+        <span>Gender</span>
+        <strong>{{ student.gender|default:"Not specified" }}</strong>
     </article>
     <article>
         <span>Class</span>
         <strong>{{ student.current_class }}</strong>
+    </article>
+    <article>
+        <span>Session</span>
+        <strong>{{ student.active_session }}</strong>
     </article>
 </section>
 
