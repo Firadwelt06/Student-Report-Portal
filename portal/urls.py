@@ -25,4 +25,5 @@ urlpatterns = [
     path("admin-portal/classes/", views.classes_manage, name="classes_manage"),
     path("admin-portal/classes/<int:class_id>/edit/", views.class_edit, name="class_edit"),
     path("admin-portal/classes/<int:class_id>/delete/", views.class_delete, name="class_delete"),
+    path("feedback/", views.submit_feedback, name="submit_feedback"),
 ]

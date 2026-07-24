@@ -17,6 +17,10 @@ from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from .decorators import admin_required
 from .forms import (
@@ -109,7 +113,23 @@ def download_result(request, result_id):
     response["Cache-Control"] = "private, no-store"
     return response
 
+@login_required
+def submit_feedback(request):
+    if request.method == "POST":
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+        contact = request.POST.get("contact", "not provided")
+        student_id = request.POST.get("student_id")
 
+        send_mail(
+            subject=f"[Portal Feedback] {subject}",
+            message=f"Student ID: {student_id}\nContact: {contact}\n\n{message}",
+            from_email=None,  # uses DEFAULT_FROM_EMAIL
+            recipient_list=["adeleyebukola587@gmail.com"],
+        )
+        messages.success(request, "Thanks — your feedback has been sent to the school office.")
+    return redirect("dashboard")
+    
 @admin_required
 def admin_dashboard(request):
     query = request.GET.get("q", "").strip()

@@ -60,4 +60,31 @@
         </table>
     </div>
 </section>
+
+<section class="feedback-section">
+    <div class="section-header">
+        <h2>Feedback &amp; Complaints</h2>
+        <p>Spotted an error on a result, or have a suggestion for the portal? Let the school office know directly.</p>
+    </div>
+    <form class="feedback-form" method="post" action="{% url 'submit_feedback' %}">
+        {% csrf_token %}
+        <input type="hidden" name="student_id" value="{{ student.student_id }}">
+
+        <label for="feedback-subject">Subject</label>
+        <select id="feedback-subject" name="subject" required>
+            <option value="result_error">Error on a result</option>
+            <option value="login_issue">Login / access issue</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="feedback-message">Message</label>
+        <textarea id="feedback-message" name="message" rows="4" placeholder="Tell us what happened or what you'd like to see..." required></textarea>
+
+        <label for="feedback-contact">Your email or phone (optional, in case we need to follow up)</label>
+        <input type="text" id="feedback-contact" name="contact" placeholder="e.g. name@email.com or 080...">
+
+        <button type="submit" class="button primary">Send Feedback</button>
+    </form>
+</section>
 {% endblock %}
