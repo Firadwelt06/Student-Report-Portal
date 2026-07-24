@@ -61,6 +61,33 @@
     </div>
 </section>
 
+<!-- ========================================================== -->
+<!-- NEWSLETTER SECTION (INSERTED HERE)                        -->
+<!-- ========================================================== -->
+<section class="newsletter-card-section">
+    <div class="section-header">
+        <h2>📢 Latest School Newsletter</h2>
+    </div>
+    {% if latest_newsletter %}
+        <div class="newsletter-card">
+            <div class="newsletter-card-header">
+                <span class="newsletter-session-badge">{{ latest_newsletter.academic_session }}</span>
+                <span class="newsletter-date">{{ latest_newsletter.created_at|date:"F j, Y" }}</span>
+            </div>
+            <h3 class="newsletter-card-title">{{ latest_newsletter.title }}</h3>
+            <p class="newsletter-card-summary">{{ latest_newsletter.summary }}</p>
+            <div class="newsletter-card-action">
+                <a href="{% url 'newsletter_detail' latest_newsletter.slug %}" class="button primary">Read Full Newsletter</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="newsletter-card empty-card">
+            <p>No newsletter has been published.</p>
+        </div>
+    {% endif %}
+</section>
+<!-- ========================================================== -->
+
 <section class="feedback-section">
     <div class="section-header">
         <h2>Feedback &amp; Complaints</h2>

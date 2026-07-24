@@ -15,12 +15,11 @@ from django.db.models import ProtectedError
 from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.mail import send_mail
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, DetailView
+from .models import Newsletter
 
 from .decorators import admin_required
 from .forms import (
@@ -38,7 +37,8 @@ from .models import AcademicSession, ResultDocument, ResultPublication, SchoolCl
 
 
 def home(request):
-    return render(request, "portal/home.html")
+    latest_newsletter = Newsletter.objects.filter(published=True).order_by("-created_at").first()
+    return render(request, "portal/home.html", {"latest_newsletter": latest_newsletter})
 
 
 class PortalLoginView(LoginView):
@@ -50,6 +50,25 @@ class PortalLoginView(LoginView):
             return reverse_lazy("admin_dashboard")
         return reverse_lazy("dashboard")
 
+class NewsletterListView(ListView):
+    model = Newsletter
+    template_name = "portal/newsletter_list.html"
+    context_object_name = "newsletters"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Newsletter.objects.filter(published=True).order_by("-created_at")
+
+
+class NewsletterDetailView(DetailView):
+    model = Newsletter
+    template_name = "portal/newsletter_detail.html"
+    context_object_name = "newsletter"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def get_queryset(self):
+        return Newsletter.objects.filter(published=True)
 
 def logout_view(request):
     logout(request)
@@ -72,7 +91,12 @@ def dashboard(request):
         school_class=student.current_class,
         term__in=published_terms,
     )
-    return render(request, "portal/dashboard.html", {"student": student, "results": results})
+    latest_newsletter = Newsletter.objects.filter(published=True).order_by("-created_at").first()
+    return render(
+        request,
+        "portal/dashboard.html",
+        {"student": student, "results": results, "latest_newsletter": latest_newsletter},
+    )
 
 
 def _authorize_result_access(request, result_id):
@@ -141,6 +165,7 @@ def admin_dashboard(request):
             | Q(guardian_name__icontains=query)
             | Q(guardian_email__icontains=query)
         )
+    latest_newsletter = Newsletter.objects.filter(published=True).order_by("-created_at").first()
     context = {
         "query": query,
         "students": students[:50],
@@ -149,6 +174,7 @@ def admin_dashboard(request):
         "class_count": SchoolClass.objects.count(),
         "session_count": AcademicSession.objects.count(),
         "published_term_count": ResultPublication.objects.filter(is_published=True).count(),
+        "latest_newsletter": latest_newsletter,
     }
     return render(request, "portal/admin_dashboard.html", context)
 

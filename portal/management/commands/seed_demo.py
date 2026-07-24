@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from portal.models import AcademicSession, SchoolClass, Student, User
+from portal.models import AcademicSession, Newsletter, SchoolClass, Student, User
 
 
 class Command(BaseCommand):
@@ -30,6 +30,17 @@ class Command(BaseCommand):
                 "guardian_email": "guardian@example.com",
                 "current_class": school_class,
                 "active_session": session,
+            },
+        )
+
+        Newsletter.objects.get_or_create(
+            title="Welcome to Divine Triumph Newsletter",
+            defaults={
+                "slug": "welcome-newsletter",
+                "academic_session": session.name,
+                "summary": "Stay up to date with school announcements and news from Divine Triumph International School.",
+                "body": "Welcome to the portal! This newsletter introduces the student dashboard and latest school news.",
+                "published": True,
             },
         )
 

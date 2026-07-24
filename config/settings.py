@@ -157,8 +157,18 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Ensure static folder exists locally without raising errors if empty
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 
-# WhiteNoise storage configuration
+# Media files (newsletter images, etc.)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# WhiteNoise storage configuration with default backend for media uploads
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": MEDIA_ROOT,
+        },
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },

@@ -1,0 +1,48 @@
+{% extends "portal/base.html" %}
+{% block title %}School Newsletters - Divine Triumph International School{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">Publications</p>
+    <h1>School Newsletters</h1>
+    <p>Stay updated with academic updates, event highlights, and official announcements.</p>
+</section>
+
+<section class="newsletter-list-section">
+    {% for newsletter in newsletters %}
+        <article class="newsletter-card list-card">
+            <div class="newsletter-card-header">
+                <span class="newsletter-session-badge">{{ newsletter.academic_session }}</span>
+                <span class="newsletter-date">{{ newsletter.created_at|date:"F j, Y" }}</span>
+            </div>
+            <h2 class="newsletter-card-title">
+                <a href="{% url 'newsletter_detail' newsletter.slug %}">{{ newsletter.title }}</a>
+            </h2>
+            <p class="newsletter-card-summary">{{ newsletter.summary }}</p>
+            <div class="newsletter-card-action">
+                <a href="{% url 'newsletter_detail' newsletter.slug %}" class="button primary">Read Full Newsletter</a>
+            </div>
+        </article>
+    {% empty %}
+        <div class="newsletter-card empty-card">
+            <p>No newsletter has been published.</p>
+        </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="button secondary">&laquo; Previous</a>
+            {% endif %}
+            <span class="current-page">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="button secondary">Next &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+
+<div class="back-nav">
+    <a href="{% url 'dashboard' %}" class="button secondary">&larr; Back to Dashboard</a>
+</div>
+{% endblock %}

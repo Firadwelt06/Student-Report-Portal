@@ -30,6 +30,31 @@
     <p>At Divine Triumph International School, we believe every child deserves a clear picture of their progress &mdash; and every parent deserves easy access to it. This portal was built to keep you close to your child's academic journey, term after term.</p>
 </section>
 
+<section class="newsletter-card-section home-newsletter-section">
+    <div class="section-header">
+        <h2>📢 Latest Newsletter</h2>
+    </div>
+    {% if latest_newsletter %}
+        <div class="newsletter-card">
+            <div class="newsletter-card-header">
+                <span class="newsletter-session-badge">{{ latest_newsletter.academic_session }}</span>
+                <span class="newsletter-date">{{ latest_newsletter.created_at|date:"F j, Y" }}</span>
+            </div>
+            <h3 class="newsletter-card-title">{{ latest_newsletter.title }}</h3>
+            <p class="newsletter-card-summary">{{ latest_newsletter.summary }}</p>
+            <div class="newsletter-card-action">
+                <a href="{% url 'newsletter_detail' latest_newsletter.slug %}" class="button primary">Read Full Newsletter</a>
+                <a href="{% url 'newsletter_list' %}" class="button">All Newsletters</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="newsletter-card empty-card">
+            <p>No newsletter has been published yet.</p>
+            <a href="{% url 'newsletter_list' %}" class="button">View Newsletters</a>
+        </div>
+    {% endif %}
+</section>
+
 <section class="how-it-works">
     <h2>How It Works</h2>
     <ol>

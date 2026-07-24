@@ -6,11 +6,54 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import AcademicSession, ResultDocument, ResultPublication, SchoolClass, Student
+from .models import AcademicSession, Newsletter, ResultDocument, ResultPublication, SchoolClass, Student
 from .views import _attach_bulk_result_pdfs
 
 
 User = get_user_model()
+
+
+class DashboardNewsletterTests(TestCase):
+    def setUp(self):
+        self.session = AcademicSession.objects.create(name="2026/2027", is_active=True)
+        self.school_class = SchoolClass.objects.create(name="JSS 1A")
+        self.user = User.objects.create_user(username="STD-001", password="StudentPass123!")
+        self.student = Student.objects.create(
+            user=self.user,
+            student_id="STD-001",
+            full_name="Ada Johnson",
+            gender="Female",
+            guardian_name="Mrs. Johnson",
+            guardian_email="ada.guardian@example.com",
+            current_class=self.school_class,
+            active_session=self.session,
+        )
+
+    def test_dashboard_includes_latest_published_newsletter(self):
+        older = Newsletter.objects.create(
+            title="Older Newsletter",
+            slug="older-newsletter",
+            academic_session="2026/2027",
+            summary="Older summary",
+            body="Older body",
+            published=True,
+        )
+        latest = Newsletter.objects.create(
+            title="Latest Newsletter",
+            slug="latest-newsletter",
+            academic_session="2026/2027",
+            summary="Latest summary",
+            body="Latest body",
+            published=True,
+        )
+
+        self.client.login(username="STD-001", password="StudentPass123!")
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["latest_newsletter"], latest)
+        self.assertNotEqual(response.context["latest_newsletter"], older)
+        self.assertContains(response, "Latest Newsletter")
 
 
 class ResultAccessTests(TestCase):

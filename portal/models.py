@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 from .storage import private_storage
 
@@ -124,3 +125,53 @@ class ResultPublication(models.Model):
     def __str__(self):
         status = "Published" if self.is_published else "Unpublished"
         return f"{self.academic_session} - {self.school_class} - {self.term} ({status})"
+
+# ---------------------------------------------------------------------------
+# Newsletter Model
+# ---------------------------------------------------------------------------
+
+class Newsletter(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Newsletter Title")
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    academic_session = models.CharField(
+        max_length=50,
+        help_text="e.g. 2025/2026 ACADEMIC SESSION",
+        verbose_name="Academic Session"
+    )
+    summary = models.TextField(
+        help_text="Brief summary to display on the dashboard card."
+    )
+    body = models.TextField(
+        help_text="Full body content. Paragraphs separated by blank lines will render cleanly."
+    )
+    featured_image = models.ImageField(
+        upload_to="newsletters/",
+        blank=True,
+        null=True,
+        verbose_name="Featured Image"
+    )
+    published = models.BooleanField(
+        default=False,
+        help_text="Tick to publish this newsletter to the portal."
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Newsletter"
+        verbose_name_plural = "Newsletters"
+
+    def __str__(self):
+        return f"{self.title} ({self.academic_session})"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Newsletter.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)

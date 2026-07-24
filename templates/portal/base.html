@@ -17,6 +17,7 @@
             </span>
         </a>
         <nav class="nav">
+            <a href="{% url 'newsletter_list' %}">Newsletters</a>
             {% if user.is_authenticated %}
                 {% if user.is_portal_admin %}
                     <a href="{% url 'admin_dashboard' %}">Admin</a>

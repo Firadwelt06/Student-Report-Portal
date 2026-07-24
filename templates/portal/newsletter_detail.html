@@ -1,0 +1,152 @@
+{% extends "portal/base.html" %}
+{% load static %}
+{% block title %}{{ newsletter.title }} - Divine Triumph International School{% endblock %}
+
+{% block content %}
+<div class="newsletter-detail-wrapper">
+    <div class="back-nav">
+        <a href="{% url 'dashboard' %}" class="button secondary">&larr; Back to Dashboard</a>
+    </div>
+
+    <article class="newsletter-paper">
+        <header class="newsletter-paper-header">
+            <div class="newsletter-branding">
+                <!-- School logo from static files -->
+                <div class="newsletter-logo-wrap">
+                    <img src="{% static 'portal/images/divine_triumph_logo.png' %}" alt="Divine Triumph International School Logo" class="newsletter-logo">
+                </div>
+                <div class="newsletter-school-info">
+                    <h1>DIVINE TRIUMPH INTERNATIONAL SCHOOL</h1>
+                    <p class="motto">Hard Work, Orderliness and Excellence</p>
+                </div>
+            </div>
+            <div class="newsletter-divider-bar"></div>
+            <div class="newsletter-meta-banner">
+                <span class="session">{{ newsletter.academic_session }}</span>
+                <span class="pub-date">Published: {{ newsletter.created_at|date:"F j, Y" }}</span>
+            </div>
+            <h2 class="newsletter-main-title">{{ newsletter.title }}</h2>
+        </header>
+
+        {% if newsletter.featured_image %}
+            <div class="newsletter-featured-image">
+                <img src="{{ newsletter.featured_image.url }}" alt="{{ newsletter.title }}">
+            </div>
+        {% endif %}
+
+        <section class="newsletter-body-content">
+            <div class="newsletter-section-card welcome-card">
+                <p class="salutation">💙 Dear Esteemed Parents/Guardians,</p>
+                <p>As we bring the 2025/2026 Academic Session to a successful close, we sincerely appreciate your unwavering support, trust, and partnership with Divine Triumph International School.</p>
+                <p>Your encouragement, cooperation, and commitment have contributed immensely to the success of our learners and the continued growth of our school. Thank you for believing in us and for giving us the privilege of nurturing your children.</p>
+            </div>
+
+            <div class="newsletter-section-card">
+                <div class="section-card-header">
+                    <span class="card-icon">🌟</span>
+                    <h3>Session Highlights</h3>
+                </div>
+                <p>During the term, our learners actively participated in enriching co-curricular activities:</p>
+                <div class="highlights-pill-grid">
+                    <span class="highlight-pill">🧮 Mathematics Quiz Competition</span>
+                    <span class="highlight-pill">🔤 Spelling Bee Competition</span>
+                    <span class="highlight-pill">🍳 Home Economics Practical Sessions</span>
+                    <span class="highlight-pill">🎉 Children's Day Celebration</span>
+                    <span class="highlight-pill">👧 International Day of the Girl Child</span>
+                </div>
+                <p class="highlights-footer">These activities helped to develop confidence, creativity, teamwork, leadership, and practical life skills while making learning enjoyable.</p>
+            </div>
+
+            <div class="newsletter-section-card highlight-card summer-card">
+                <div class="section-card-header">
+                    <span class="card-icon">☀️</span>
+                    <h3>2026 Summer Lesson</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">📅 Date</span>
+                        <span class="info-value">Monday, 3rd Aug – Thursday, 27th Aug, 2026</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">🗓 Days &amp; Time</span>
+                        <span class="info-value">Mon – Thu | 9:00 a.m. – 1:00 p.m.</span>
+                    </div>
+                    <div class="info-item full-width price-tag">
+                        <span class="info-label">💵 Program Fee</span>
+                        <span class="info-value">₦7,000</span>
+                    </div>
+                </div>
+                
+                <div class="activities-box">
+                    <h4>✨ Learners Will Enjoy:</h4>
+                    <ul class="styled-list">
+                        <li>✅ Intensive Academic Lessons</li>
+                        <li>♟️ Chess &amp; 🔠 Scrabble</li>
+                        <li>🎲 Indoor Games &amp; ⚽ Outdoor Games</li>
+                        <li>🎯 Fun &amp; Educational Activities</li>
+                    </ul>
+                </div>
+                <p class="cta-text">Give your child a rewarding and enjoyable holiday experience!</p>
+            </div>
+
+            <div class="newsletter-section-card">
+                <div class="section-card-header">
+                    <span class="card-icon">📝</span>
+                    <h3>Entrance Examination</h3>
+                </div>
+                <p>Admission into <strong>ALL CLASSES</strong> for the 2026/2027 Academic Session will take place on:</p>
+                <div class="date-chips-container">
+                    <div class="date-chip">📅 Saturday, 18th July, 2026</div>
+                    <div class="date-chip">📅 Saturday, 8th August, 2026</div>
+                    <div class="date-chip">📅 Friday, 4th September, 2026</div>
+                </div>
+                <div class="callout-box">
+                    <p>📢 <strong>Recommendation:</strong> Kindly recommend Divine Triumph International School to your friends, neighbours, relatives, and colleagues seeking quality education for their children.</p>
+                </div>
+            </div>
+
+            <div class="newsletter-section-card highlight-card resumption-card">
+                <div class="section-card-header">
+                    <span class="card-icon">🔔</span>
+                    <h3>Resumption Date</h3>
+                </div>
+                <div class="resumption-banner">
+                    <span class="session-title">🏫 2026/2027 Academic Session</span>
+                    <span class="resumption-date">📅 Monday, 7th September, 2026</span>
+                </div>
+                <p>We look forward to welcoming all our learners back, refreshed and ready for another successful academic year.</p>
+            </div>
+
+            <div class="newsletter-section-card signoff-card">
+                <div class="section-card-header">
+                    <span class="card-icon">💐</span>
+                    <h3>Holiday Message</h3>
+                </div>
+                <p>The Management and Staff of Divine Triumph International School wish you and your family a peaceful, safe, and refreshing holiday.</p>
+                <p>Thank you for being a valued member of the Divine Triumph International School family.</p>
+                
+                <div class="signature-block">
+                    <strong>Mr. Bright Uzoma</strong>
+                    <span>Principal, Junior Secondary School</span>
+                    <strong class="school-name">DIVINE TRIUMPH INTERNATIONAL SCHOOL</strong>
+                    <span class="motto">Hard Work, Orderliness and Excellence</span>
+                </div>
+            </div>
+            {{ newsletter.body|linebreaks }}
+        </section>
+
+        <footer class="newsletter-paper-footer">
+            <div class="newsletter-divider-bar"></div>
+            <div class="footer-signoff">
+                <p><strong>Management &amp; Staff</strong></p>
+                <p>Divine Triumph International School</p>
+                <p class="motto">Hard Work, Orderliness and Excellence</p>
+            </div>
+        </footer>
+    </article>
+
+    <div class="back-nav bottom-nav">
+        <a href="{% url 'dashboard' %}" class="button secondary">&larr; Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

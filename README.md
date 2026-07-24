@@ -193,27 +193,285 @@ static/portal/images/divine_triumph_logo.png
 
 For future logo changes, replace that file with a new PNG using the same filename, then run `python manage.py collectstatic --noinput` before deployment.
 
-## Deployment Guidance
+## Managing Newsletters
 
-For production:
+Newsletters appear on the public home page, student dashboards, and admin dashboards. To create or edit a newsletter:
 
-- Use MySQL or PostgreSQL, not SQLite.
-- Set `DJANGO_DEBUG=False`.
-- Use a long random `DJANGO_SECRET_KEY`.
-- Set `DJANGO_ALLOWED_HOSTS` to your real domain.
-- Serve the site over HTTPS.
-- Store private PDFs outside the public web root.
-- Use object storage with signed access for very large deployments.
-- Run behind Nginx or a platform proxy.
-- Use Gunicorn or another production WSGI server.
-- Back up the database and private result PDFs.
-- Add monitoring and audit logs for admin actions.
+1. Go to `/admin/`
+2. Click **Newsletters**
+3. Click **Add Newsletter** to create a new one
+4. Fill in:
+   - **Title**: e.g. "Term 1 Results Now Available"
+   - **Academic Session**: e.g. "2026/2027"
+   - **Summary**: Brief text for the dashboard card preview
+   - **Body**: Full newsletter content (paragraphs separated by blank lines)
+   - **Featured Image** (optional): A PNG or JPG image for the newsletter
+   - **Published**: Tick to display it on the portal
+5. Click **Save**
 
-Typical deployment options:
+The latest published newsletter will automatically appear on:
+- Public home page (before login)
+- Student dashboard (after login)
+- Admin dashboard
 
-- Render, Railway, Fly.io, DigitalOcean App Platform, or AWS Elastic Beanstalk for managed app hosting.
-- DigitalOcean Droplet, AWS EC2, or a school-owned VPS for full control.
-- S3-compatible private storage for PDFs when the result library grows.
+---
+
+## Deployment: Online Setup
+
+### Pre-Deployment Checklist
+
+Before going live, ensure you have:
+
+- [ ] Production database (PostgreSQL or MySQL) created and accessible
+- [ ] A hosting platform account (Railway, Render, Fly.io, DigitalOcean, AWS, etc.)
+- [ ] A custom domain name (optional but recommended)
+- [ ] HTTPS certificate (most platforms provide this automatically)
+- [ ] Email credentials for password resets (optional but recommended)
+
+### Environment Variables (.env)
+
+Create a `.env` file in the project root with these values:
+
+```text
+# Core Security
+DJANGO_SECRET_KEY=your_very_long_random_secret_key_here_min_50_chars
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com,your-app.railway.app
+
+# Database (PostgreSQL example)
+DATABASE_URL=postgresql://username:password@host:5432/database_name
+
+# Or MySQL
+# DATABASE_ENGINE=mysql
+# MYSQL_DATABASE=student_result_portal
+# MYSQL_USER=admin_user
+# MYSQL_PASSWORD=strong_password
+# MYSQL_HOST=your-db-host.com
+# MYSQL_PORT=3306
+
+# Email (for password resets and feedback)
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-school@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password_or_smtp_token
+DEFAULT_FROM_EMAIL=noreply@yourdomain.com
+
+# CSRF & CORS
+DJANGO_CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+```
+
+⚠️ **Never commit `.env` to version control. Add it to `.gitignore`.**
+
+For `DJANGO_SECRET_KEY`, generate a strong random key:
+
+```python
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
+```
+
+For Gmail SMTP, use an [App Password](https://myaccount.google.com/apppasswords) instead of your real Gmail password.
+
+### Option 1: Deploy on Railway (Recommended for Quick Setup)
+
+1. **Sign up** at [railway.app](https://railway.app)
+2. **Connect your GitHub repository** (or upload the project)
+3. **Create a new project**
+4. **Add services:**
+   - PostgreSQL database (or MySQL)
+   - Python web service (deploy from this repository)
+5. **Add environment variables** from your `.env` file
+6. **Deploy**
+
+Railway automatically:
+- Runs migrations on deploy
+- Collects static files
+- Handles HTTPS
+- Provides a subdomain URL (e.g. `your-app-abc123.railway.app`)
+
+### Option 2: Deploy on Render.com
+
+1. **Sign up** at [render.com](https://render.com)
+2. **Create a new Web Service**
+3. **Connect your GitHub repository**
+4. **Configure build and start commands:**
+   - **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`
+   - **Start Command**: `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`
+5. **Add environment variables** from your `.env` file
+6. **Connect a PostgreSQL database** (or add MySQL credentials)
+7. **Deploy**
+
+### Option 3: Deploy on AWS Elastic Beanstalk
+
+1. **Install AWS CLI and EB CLI**
+2. **Initialize EB project:**
+   ```bash
+   eb init -p python-3.9 student-result-portal --region us-east-1
+   ```
+3. **Create environment:**
+   ```bash
+   eb create production --database --database.engine postgres --database.size db.t3.micro
+   ```
+4. **Set environment variables:**
+   ```bash
+   eb setenv DJANGO_DEBUG=False DJANGO_SECRET_KEY=... DATABASE_URL=...
+   ```
+5. **Deploy:**
+   ```bash
+   eb deploy
+   ```
+
+### Option 4: Deploy on DigitalOcean App Platform
+
+1. **Sign up** at [digitalocean.com](https://digitalocean.com)
+2. **Create a new App** and connect your GitHub repository
+3. **DigitalOcean will auto-detect** the Python environment
+4. **Add a Managed PostgreSQL database**
+5. **Set environment variables** in the app config
+6. **Deploy**
+
+### Post-Deployment Steps
+
+After your app is live:
+
+1. **Run migrations on the production database:**
+   ```bash
+   python manage.py migrate
+   ```
+
+2. **Create a superuser (admin account):**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+3. **Collect static files:**
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+4. **Seed demo data (optional, for testing):**
+   ```bash
+   python manage.py seed_demo
+   ```
+
+5. **Change the demo admin password** in `/admin/` immediately
+
+6. **Set up a custom domain** (if using a subdomain from your platform)
+
+7. **Enable HTTPS** (automatic on most platforms)
+
+### Production Security Checklist
+
+- [ ] `DJANGO_DEBUG = False` in production
+- [ ] `DJANGO_SECRET_KEY` is long and random
+- [ ] Database credentials are environment variables, not hardcoded
+- [ ] `DJANGO_ALLOWED_HOSTS` includes your domain and www variant
+- [ ] `CSRF_TRUSTED_ORIGINS` is set correctly
+- [ ] HTTPS is enforced (add `SECURE_SSL_REDIRECT = True` to settings if needed)
+- [ ] Email backend is configured for password resets
+- [ ] Backups are scheduled for your database
+- [ ] Media uploads (newsletters, etc.) are served securely
+- [ ] Private PDFs remain outside the public web root
+- [ ] Admin credentials are strong and changed from demo defaults
+- [ ] Logging and monitoring are enabled for errors and access
+
+### Scaling for Large Deployments
+
+If your school grows and the app serves thousands of students:
+
+1. **Use object storage** (AWS S3, DigitalOcean Spaces) for media files:
+   ```bash
+   pip install django-storages boto3
+   ```
+
+2. **Use a CDN** (Cloudflare, AWS CloudFront) to cache static files and images
+
+3. **Set up database replication** for read-heavy loads
+
+4. **Enable caching** (Redis) for session and query results
+
+5. **Use a background job queue** (Celery + Redis) for bulk email and imports
+
+6. **Monitor with APM** (New Relic, DataDog, Sentry) for errors and performance
+
+### Backup & Recovery
+
+Set up automated backups for your database and media files:
+
+- **Database**: Most platforms offer automated daily backups. Verify in your platform dashboard.
+- **Media files**: Set up scheduled uploads to S3 or a backup service.
+- **Code**: Keep your GitHub repository as your primary backup.
+
+Test restores regularly to ensure you can recover from data loss.
+
+### Monitoring & Maintenance
+
+After deployment:
+
+- Monitor server logs daily for errors
+- Check admin dashboard for failed login attempts
+- Back up the database weekly
+- Review slow queries and optimize if needed
+- Keep Django and dependencies updated with security patches
+- Test password resets and data exports monthly
+
+---
+
+## Development
+
+### Running Tests
+
+```powershell
+python manage.py test portal.tests
+```
+
+### Linting & Code Style
+
+Consider adding:
+- `flake8` for style checks
+- `black` for code formatting
+- `isort` for import sorting
+
+### Database Migrations
+
+After changing models:
+
+```powershell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## Troubleshooting
+
+### "No module named 'django'" after installing requirements
+
+Make sure you activated the virtual environment:
+
+```powershell
+./.venv/Scripts/Activate.ps1
+```
+
+### "Could not find config for 'default' in settings.STORAGES"
+
+This error occurs when uploading newsletter images. Make sure `STORAGES` in `config/settings.py` includes both a `"default"` backend for media uploads and a `"staticfiles"` backend for static files (this should be configured in the current version).
+
+### Database migrations failed
+
+```powershell
+python manage.py migrate --fake-initial
+```
+
+Use `--fake-initial` only if the database already has the schema but migrations weren't tracked.
+
+### Can't log in
+
+1. Check the `.env` file is correct
+2. Verify the database is running and accessible
+3. Run `python manage.py migrate` to ensure tables exist
+4. Reset the admin password: `python manage.py changepassword admin`
+
+---
 
 ## Next Production Features
 

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from .models import Newsletter
 
 from .models import AcademicSession, ResultDocument, ResultPublication, SchoolClass, Student, User
 
@@ -34,3 +35,30 @@ class ResultPublicationAdmin(admin.ModelAdmin):
     list_display = ("academic_session", "school_class", "term", "is_published", "updated_at")
     list_filter = ("academic_session", "school_class", "is_published")
     search_fields = ("term", "academic_session__name", "school_class__name")
+
+@admin.register(Newsletter)
+class NewsletterAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "academic_session",
+        "published",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("published", "academic_session", "created_at")
+    search_fields = ("title", "summary", "body", "academic_session")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ("created_at", "updated_at")
+    list_editable = ("published",)
+    fieldsets = (
+        (None, {
+            "fields": ("title", "slug", "academic_session", "published")
+        }),
+        ("Content", {
+            "fields": ("summary", "body", "featured_image")
+        }),
+        ("Timestamps", {
+            "fields": ("created_at", "updated_at"),
+            "classes": ("collapse",),
+        }),
+    )
